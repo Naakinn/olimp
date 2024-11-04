@@ -2,7 +2,6 @@ from PyQt5.QtWidgets import (
     QWidget, QLabel, QLineEdit, QTextEdit,
     QPushButton, QVBoxLayout, QHBoxLayout, QComboBox, QMessageBox
 )
-from PyQt5.QtCore import Qt
 from services.text_generator import TextGenerator
 
 class MainWindow(QWidget):
@@ -19,10 +18,15 @@ class MainWindow(QWidget):
         self.location_input = QLineEdit()
         self.type_input = QLineEdit()
         self.amenities_input = QLineEdit()
+        self.features_input = QLineEdit()
 
         # Выбор тона текста
         self.tone_combo = QComboBox()
         self.tone_combo.addItems(["Дружелюбный", "Официальный", "Маркетинговый"])
+
+        # Выбор языка 
+        self.lang_combo = QComboBox()
+        self.lang_combo.addItems(["Русский", "English"])
 
         # Кнопка генерации
         self.generate_button = QPushButton("Сгенерировать описание")
@@ -38,7 +42,9 @@ class MainWindow(QWidget):
         layout.addLayout(self.create_form_layout("Название отеля*", self.name_input))
         layout.addLayout(self.create_form_layout("Местоположение(город, страна)*", self.location_input))
         layout.addLayout(self.create_form_layout("Тип отеля(например, курортный отель)*", self.type_input))
+        layout.addLayout(self.create_form_layout("Язык описания*", self.lang_combo))
         layout.addLayout(self.create_form_layout("Удобства", self.amenities_input))
+        layout.addLayout(self.create_form_layout("Ocoбенности: ", self.features_input))
         layout.addLayout(self.create_form_layout("Тон текста", self.tone_combo))
 
         layout.addWidget(self.generate_button)
@@ -62,19 +68,15 @@ class MainWindow(QWidget):
         hotel_type = self.type_input.text()
         amenities = self.amenities_input.text()
         tone = self.tone_combo.currentText()
+        features = self.features_input.text() 
+        lang = self.lang_combo.currentText()
 
         # Проверка обязательных полей
-        if not name or not location or not hotel_type:
+        if name and location and hotel_type and lang:
+            # Генерация описания
+            description = self.text_generator.generate(name, location, hotel_type, amenities, tone, features, lang)
+            # Установка в поле для описания  
+            self.description_output.setText(description)
+        else: 
             QMessageBox.warning(self, "Предупреждение", "Пожалуйста, заполните все обязательные поля.")
             return
-
-        # Генерация описания
-        description = self.text_generator.generate(
-            name=name,
-            location=location,
-            hotel_type=hotel_type,
-            amenities=amenities,
-            tone=tone
-        )
-        # Установка в поле для описания  
-        self.description_output.setText(description)

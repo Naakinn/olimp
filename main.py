@@ -7,6 +7,7 @@ def main():
 
     window = MainWindow() 
     window.show()
+    window.resize(800, 800)
     window.move(300, 300)
 
     sys.exit(app.exec_())
