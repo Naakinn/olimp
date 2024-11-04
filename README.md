@@ -1,6 +1,6 @@
 ## Установка зависимостей
 ```
-pip install PyQt5 transformers torch
+pip install PyQt5 g4f
 ```
 ## Запуск
 ```
